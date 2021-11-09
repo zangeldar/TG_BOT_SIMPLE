@@ -232,6 +232,7 @@ namespace bitrix
 
         }
 
+        /*
         public string imDialogMessagesGet(string DIALOG_ID, 
                                     bool JSON=true,
                                     string LAST_ID="",
@@ -249,6 +250,7 @@ namespace bitrix
 
             return sendRequest(serverURL, "/rest/im.dialog.messages.get" + ((JSON) ? ".json" : ".xml"), RawPostData(MyParameters));
         }
+        */
 
         public string imMessageAdd(string DIALOG_ID,
                                 string MESSAGE,
@@ -348,6 +350,27 @@ namespace bitrix
             MyParameters.Add("sessid", bitrixSessionId);
 
             return sendRequest(serverURL, "/rest/im.user.get" + ((JSON) ? ".json" : ".xml"), RawPostData(MyParameters));
+        }
+
+        public string imDialogMessagesGet(string DIALOG_ID,
+                                    bool JSON = true,
+                                    long LAST_ID = -1,
+                                    long FIRST_ID = -1,
+                                    int LIMIT = 20)
+        {
+            Dictionary<string, string> MyParameters = new Dictionary<string, string>();
+
+            MyParameters.Add("DIALOG_ID", DIALOG_ID);
+            if (LAST_ID > 0)
+                MyParameters.Add("LAST_ID", LAST_ID.ToString());
+            if (FIRST_ID >= 0)
+                MyParameters.Add("FIRST_ID", FIRST_ID.ToString());
+            if (LIMIT > 0)
+                MyParameters.Add("LIMIT", LIMIT.ToString());
+
+            MyParameters.Add("sessid", bitrixSessionId);
+
+            return sendRequest( serverURL, "/rest/im.dialog.messages.get" + ((JSON) ? ".json" : ".xml"), RawPostData(MyParameters));            
         }
     }
 }

@@ -205,7 +205,6 @@ namespace bitrix
         public Time time { get; set; }
     }
 
-
     /*  // NON-REST
     class BitrixLastMessages
     {

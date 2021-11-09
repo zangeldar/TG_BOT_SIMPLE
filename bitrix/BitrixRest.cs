@@ -64,8 +64,48 @@ namespace bitrix
 
             return new aAnswer(Path + ".pin" + ((JSON) ? ".json" : ".xml"), MyParameters);
         }
+
     }
 
-    
+    public class BitrixRestImDialog : BitrixRestIm
+    {
+        new public string Path { get { return base.Path + ".dialog"; } }
+    }
+    public class BitrixRestImDialogMessages : BitrixRestImDialog
+    {
+        new public string Path { get { return base.Path + ".messages"; } }
+        private Dictionary<string, string> MyParameters;
+        public aAnswer MessagesGet( string DIALOG_ID,
+                                    bool JSON = true,
+                                    long LAST_ID = -1,
+                                    long FIRST_ID = -1,
+                                    int LIMIT = 20)
+        {
+            MyParameters = new Dictionary<string, string>();
+
+            MyParameters.Add("DIALOG_ID", DIALOG_ID);
+            if (LAST_ID > 0)
+                MyParameters.Add("LAST_ID", LAST_ID.ToString());
+            if (FIRST_ID >= 0)
+                MyParameters.Add("FIRST_ID", FIRST_ID.ToString());
+            if (LIMIT > 0)
+                MyParameters.Add("LIMIT", LIMIT.ToString());
+
+            return new aAnswer(Path + ".get" + ((JSON) ? ".json" : ".xml"), MyParameters);
+        }
+
+        public aAnswer MessagesGet(string DIALOG_ID,
+                                    bool JSON = true)
+        {
+            return MessagesGet(DIALOG_ID, JSON, -1, -1, -1);
+        }
+
+        public aAnswer MessagesGet(string DIALOG_ID,
+                                    int LIMIT = 20,
+                                    bool JSON = true)
+        {
+            return MessagesGet(DIALOG_ID, JSON, -1, -1, LIMIT);
+        }
+    }
     
 }

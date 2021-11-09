@@ -219,7 +219,7 @@ namespace Messenger
 
             List<Message> MessagesToSend = new List<Message>();
 
-            // перебор только новых обновлений
+            // перебор только новых обновлений ТГ
             foreach (tgUpdate item in tmpTgUpdates.getNewUpdatesOnly(settings.SettingsTelegram.LastKnownUpdateId))
             {
                 if (item.message != null)
@@ -340,7 +340,23 @@ namespace Messenger
             }
 
 
-
+            // here is place for BX => TG part
+            // надо проверять чаты BX из workListChat (он был обновлен при проверке телеграмма)
+            //workListChat[0].ChatIdBitrix
+            foreach (Chat item in workListChat)
+            {
+                if (item.ChatIdBitrix != null)
+                {
+                    if (item.ChatIdBitrix != "")
+                    {
+                        tmp = mywebcore.core.ParseJson(b.imDialogMessagesGet(item.ChatIdBitrix));
+                        RootDialogMessages tmpRootDialogMessages = Newtonsoft.Json.JsonConvert.DeserializeObject<RootDialogMessages>(b.lastAnswer);
+                        
+                    }
+                }
+                    
+            }
+            
 
             // exit routines
             SaveSettings(settingsFileName);

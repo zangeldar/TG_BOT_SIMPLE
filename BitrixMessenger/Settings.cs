@@ -129,5 +129,7 @@ namespace Messenger
 
         public string ChatIdBitrix { get; set; }
         public string ChatIdTelegram { get; set; }
+
+        public int LastMessageIdBitrix { get; set; }
     }
 }

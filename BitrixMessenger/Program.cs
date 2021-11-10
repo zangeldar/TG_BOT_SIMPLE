@@ -245,10 +245,9 @@ namespace Messenger
                             {
                                 tmp = mywebcore.core.ParseJson(t.LastAnswer);
                                 tgRoot tgRoot = Newtonsoft.Json.JsonConvert.DeserializeObject<tgRoot>(t.LastAnswer);
-                                tgRootGetChat tgRootChat = Newtonsoft.Json.JsonConvert.DeserializeObject<tgRootGetChat>(t.LastAnswer);                                
-
+                                tgRootGetChat tgRootChat = Newtonsoft.Json.JsonConvert.DeserializeObject<tgRootGetChat>(t.LastAnswer);
                                 
-
+                                
                                 for (int i = tmpListChat.Count - 1; i >= 0; i--)
                                 {
                                     // если в описании чата ТГ есть полное название чата БКС, то это признак соответствия
@@ -351,7 +350,58 @@ namespace Messenger
                     {
                         tmp = mywebcore.core.ParseJson(b.imDialogMessagesGet(item.ChatIdBitrix));
                         RootDialogMessages tmpRootDialogMessages = Newtonsoft.Json.JsonConvert.DeserializeObject<RootDialogMessages>(b.lastAnswer);
+
                         
+                        for (int i = tmpRootDialogMessages.result.messages.Count - 1; i >= 0; i--)
+                        //foreach (MessageDialogMessages inItem in tmpRootDialogMessages.result.messages)   // цикл надо развернуть
+                        {
+                            if (tmpRootDialogMessages.result.messages[i].id <= item.LastMessageIdBitrix)  // пропускаем обработанные сообщения (id менбше сохраненного)
+                                continue;
+                            else if (tmpRootDialogMessages.result.messages[i].author_id == 0)    // игнорируем системные сообщения
+                                continue;
+                            else if (tmpRootDialogMessages.result.messages[i].author_id.ToString() == tmpUserObj.UserIdBitrix)  // игнорируем сообщения системного пользователя
+                                continue;
+                            else
+                            {                                
+                                // обрабатывем сообщение битрикс для отправки в ТГ
+                                /*
+                                Message tMess = new Message()
+                                {
+                                    chat_id = item.ChatIdTelegram,
+                                    date = tmpRootDialogMessages.result.messages[i].date.ToString(),
+                                    fromBx = true,
+                                    id = tmpRootDialogMessages.result.messages[i].id.ToString(),
+                                    sender_id = tmpRootDialogMessages.result.messages[i].author_id.ToString(),
+                                    // Получить имя пользователя из массива tmpRootDialogMessages.result.users по user_id
+                                    sender_name = GetUserAuthor(tmpRootDialogMessages.result.users, tmpRootDialogMessages.result.messages[i].author_id.ToString()).name,
+                                    text = tmpRootDialogMessages.result.messages[i].text
+                                };
+                                */
+                                // ищем пользователя в списке соответствия пользователей
+                                if (item.ChatIdTelegram != null)
+                                {
+                                    //if (tmpRootDialogMessages.result.messages[i].text !=)                                
+                                    {
+                                        User currentUser = settings.GetUserByBx(tmpRootDialogMessages.result.messages[i].id.ToString());
+                                        string tgUser = "<unknown>";
+                                        string bXUser = "<unknown>";
+                                        bitrix.User tmpBxUSer = GetUserAuthor(tmpRootDialogMessages.result.users, tmpRootDialogMessages.result.messages[i].author_id.ToString());
+                                        if (tmpBxUSer != null)
+                                            bXUser = tmpBxUSer.name;
+                                        
+                                        if (currentUser != null)
+                                            if (currentUser.UserIdTelegram != null & currentUser.UserIdTelegram != "")
+                                                tgUser = currentUser.NameFullTelegram;
+
+                                        t.sendMessage(item.ChatIdTelegram,
+                                            tgUser + " [" + bXUser + "] wrote in BX:" + Environment.NewLine +
+                                            tmpRootDialogMessages.result.messages[i].text
+                                            );
+                                    }
+                                }
+                                item.LastMessageIdBitrix = tmpRootDialogMessages.result.messages[i].id;
+                            }
+                        }
                     }
                 }
                     
@@ -914,6 +964,16 @@ namespace Messenger
             result = tgChatDesc.Contains(bxChatName);
 
             return result;
+        }
+
+        private static bitrix.User GetUserAuthor(IEnumerable<bitrix.User>Users, string user_id)
+        {
+            foreach (bitrix.User item in Users)
+            {
+                if (item.id == user_id)
+                    return item;
+            }
+            return null;
         }
     }
 }

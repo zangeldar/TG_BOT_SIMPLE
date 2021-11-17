@@ -5,7 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace MessengerCore
+namespace MessengerFrmwrk
 
 {
     public static class SFileIO

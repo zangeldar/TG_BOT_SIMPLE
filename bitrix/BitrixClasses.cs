@@ -119,23 +119,23 @@ namespace bitrix
         public string status { get; set; }
 
         [JsonConverter(typeof(MyBoolToNullConverter))]
-        public DateTime idle { get; set; }  // Bool usually, but can be DateTime
+        public DateTime? idle { get; set; }  // Bool usually, but can be DateTime
 
         [JsonConverter(typeof(MyBoolToNullConverter))]
-        public DateTime last_activity_date { get; set; } // DateTime usually, but can be Bool       
+        public DateTime? last_activity_date { get; set; } // DateTime usually, but can be Bool       
 
         [JsonConverter(typeof(MyBoolToNullConverter))]
-        public DateTime mobile_last_date { get; set; } // DateTime usually, but can be Bool
+        public DateTime? mobile_last_date { get; set; } // DateTime usually, but can be Bool
 
         [JsonConverter(typeof(MyBoolToNullConverter))]
-        public DateTime absent { get; set; } // DateTime usually, but can be Bool
+        public DateTime? absent { get; set; } // DateTime usually, but can be Bool
         public List<int> departments { get; set; }
 
         [JsonConverter(typeof(MyBoolToNullConverter))]
         public Phones phones { get; set; } // was just object type
 
         [JsonConverter(typeof(MyBoolToNullConverter))]
-        public DateTime desktop_last_date { get; set; }
+        public DateTime? desktop_last_date { get; set; }
     }
 
     public class Image

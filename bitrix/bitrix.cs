@@ -62,7 +62,14 @@ namespace bitrix
         public BitrixRest Rest;
         private string sendRequest(string serverURL, string pathURL, string postData="")
         {
-
+            /*
+            ServicePointManager.Expect100Continue = true;
+            */
+            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
+              /*     | SecurityProtocolType.Tls11
+                   | SecurityProtocolType.Tls12
+                   | SecurityProtocolType.Ssl3;
+                   */
             ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(AcceptAllCertifications);
             pathURL = pathURL.Replace("+", "%2B");
             pathURL = pathURL.Replace(" ", "+");
@@ -98,6 +105,8 @@ namespace bitrix
                 stream.Write(data, 0, data.Length);
             }
              */
+
+            
 
             HttpWebResponse response;
 

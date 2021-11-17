@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MessengerCore
+namespace MessengerFrmwrk
 {
     [Serializable]
     public class Settings
@@ -103,6 +103,7 @@ namespace MessengerCore
 
         public string Description { get; set; }
 
+        
         public override bool Equals(object obj)
         {
             if (obj.GetType() == typeof(User))
@@ -116,6 +117,7 @@ namespace MessengerCore
             return false;
             //return base.Equals(obj);
         }
+        
     }
 
     [Serializable]

@@ -4,7 +4,7 @@ using System.Text;
 using bitrix;
 using tglib;
 
-namespace Messenger
+namespace MessengerCore
 {
     public class Deserializator
     {

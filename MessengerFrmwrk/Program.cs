@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Xml.Serialization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using bitrix;
 using tglib;
 
-namespace MessengerCore
+namespace MessengerFrmwrk
 {
     class Program
     {
         private const string defaultSettingsFileName = "settings.ini";
         private static string settingsFileName = "";
         private static bool InteractiveRun = true;
+        private static bool Debug = false;
         private static Settings settings = null;
 
         static void Main(string[] args)
         {
-            string tmpFileName="";
+            string tmpFileName = "";
             // проверка, передали ли в качестве аргумента имя файла настроек
             if (args.Length > 0)
                 foreach (string arg in args)
@@ -29,38 +31,42 @@ namespace MessengerCore
                     {
                         InteractiveRun = false;
                     }
+                    else if (arg == "debug")
+                    {
+                        Debug = true;
+                    }
                     else
                     {
                         Console.WriteLine("Unknown arg: " + arg);
                     }
                 }
 
-                // проверка существует ли файл
+            // проверка существует ли файл
+            if (System.IO.File.Exists(tmpFileName))
+            {
+                // пробуем загрузить настройки из файла. Если успешно, то сохраняем имя файла
+                if (LoadSettings(tmpFileName))
+                    settingsFileName = tmpFileName;
+            }
+            else
+            {
+                // файла нет, проверяем возмодность создания файла с таким именем
+                try
+                {
+                    System.IO.File.WriteAllText(tmpFileName, "test");
+                }
+                catch (Exception e)
+                {
+                    //throw;
+                }
+
+                // если получилось, то удаляем проверочный файл и сохраняем имя файла настроек
                 if (System.IO.File.Exists(tmpFileName))
                 {
-                    // пробуем загрузить настройки из файла. Если успешно, то сохраняем имя файла
-                    if (LoadSettings(tmpFileName))
-                        settingsFileName = tmpFileName;
+                    System.IO.File.Delete(tmpFileName);
+                    settingsFileName = tmpFileName;
                 }
-                else
-                {
-                    // файла нет, проверяем возмодность создания файла с таким именем
-                    try
-                    {
-                        System.IO.File.WriteAllText(tmpFileName, "test");
-                    }
-                    catch (Exception e)
-                    {
-                        //throw;
-                    }
-                    
-                    // если получилось, то удаляем проверочный файл и сохраняем имя файла настроек
-                    if (System.IO.File.Exists(tmpFileName))
-                    {
-                        System.IO.File.Delete(tmpFileName);
-                        settingsFileName = tmpFileName;
-                    }                    
-                }
+            }
 
             // проверяем, удалось ли сохранить имя файла. Если нет, то используем имя по умолчанию
             if (settingsFileName.Length == 0)
@@ -121,7 +127,7 @@ namespace MessengerCore
                     {
                         Console.WriteLine("Something worng with stored settings. Cant continue. Exit.");
                         return;
-                    }                    
+                    }
                 }
             }
 
@@ -145,7 +151,7 @@ namespace MessengerCore
 
             // создаем рабочее соответствие пользователя-пересылателя со стороны битрикс...
             User tmpUserObj = new User() { UserIdBitrix = tmpRootUser.result.id, NameFullBitrix = tmpRootUser.result.name };
-            
+
 
             tmp = mywebcore.core.ParseJson(b.imRecentGet());
             RootRecent tmpRootRecent = Newtonsoft.Json.JsonConvert.DeserializeObject<RootRecent>(b.lastAnswer);
@@ -166,13 +172,13 @@ namespace MessengerCore
                 {
                     if (settings.GetTgChatIdByBx(item.id.ToString()) == null)
                         tmpListChat.Add(new Chat() { ChatIdBitrix = item.id, NameBitrix = item.title });
-                } 
-                    
+                }
+
 
             TelegramBot t = new TelegramBot(settings.SettingsTelegram.API_KEY, settings.SettingsTelegram.ServerUrl);
             tmp = mywebcore.core.ParseJson(t.getMe());
             tgRootGetMe tmpTgRootGetMe = Newtonsoft.Json.JsonConvert.DeserializeObject<tgRootGetMe>(t.LastAnswer);
-            
+
             // заполняем рабочее соответствие пользоватлея-пересылателя со стороны телеграмм..
             tmpUserObj.NameFullTelegram = tmpTgRootGetMe.result.username;
             tmpUserObj.UserIdTelegram = tmpTgRootGetMe.result.id.ToString();
@@ -196,7 +202,7 @@ namespace MessengerCore
                 // попробовать установить соответствие среди имеющихся пользователей.
             }
             */
-                
+
             // получить последние обновления из ТГ
             tmp = mywebcore.core.ParseJson(t.getUpdates());
             tgRootGetUpdates tmpTgUpdates = Newtonsoft.Json.JsonConvert.DeserializeObject<tgRootGetUpdates>(t.LastAnswer);
@@ -233,7 +239,7 @@ namespace MessengerCore
                         if (sendToChatId != null)
                         {
                             // использовать Bx.chat_id для пересылки сообщения 
-                            
+
                         }
                         else
                         {
@@ -246,8 +252,8 @@ namespace MessengerCore
                                 tmp = mywebcore.core.ParseJson(t.LastAnswer);
                                 tgRoot tgRoot = Newtonsoft.Json.JsonConvert.DeserializeObject<tgRoot>(t.LastAnswer);
                                 tgRootGetChat tgRootChat = Newtonsoft.Json.JsonConvert.DeserializeObject<tgRootGetChat>(t.LastAnswer);
-                                
-                                
+
+
                                 for (int i = tmpListChat.Count - 1; i >= 0; i--)
                                 {
                                     // если в описании чата ТГ есть полное название чата БКС, то это признак соответствия
@@ -311,20 +317,37 @@ namespace MessengerCore
                                 string bxUser = "<unknown>";
                                 string tgUser = item.message.from.first_name;
                                 if (currentUser != null)
+                                {
                                     if (currentUser.UserIdBitrix != null & currentUser.UserIdBitrix != "")
                                         bxUser = currentUser.NameFullBitrix;
+                                }
+                                else
+                                {
+                                    workListUser.Add(new User()
+                                    {
+                                        NameFullTelegram = (tgUser + " " + item.message.from.last_name + " " + item.message.from.username).Replace("  "," "),
+                                        UserIdTelegram = item.message.from.id.ToString()
+                                    });
+                                }
+                                    
                                 /*
                                 b.SendMessage(sendToChatId,
                                     bxUser + " [" + tgUser + "] wrote in TG:" + Environment.NewLine +
                                     newMessage.text
                                     );
                                     */
-                                b.imMessageAdd(sendToChatId,
-                                    bxUser + " [" + tgUser + "] wrote in TG:" + Environment.NewLine +
-                                    newMessage.text,
-                                    true,   // JSON
-                                    true    // SYSTEM
-                                    );
+                                if (!Debug)
+                                    b.imMessageAdd(sendToChatId,
+                                        bxUser + " [" + tgUser + "] wrote in TG at " + TelegramBot.UnixTimeStampToDateTime(item.message.date).ToString() + ":" + Environment.NewLine +
+                                        newMessage.text,
+                                        true,   // JSON
+                                        true    // SYSTEM
+                                        );
+                                else
+                                    Console.WriteLine("Send to BX: " +
+                                        bxUser + " [" + tgUser + "] wrote in TG at " + TelegramBot.UnixTimeStampToDateTime(item.message.date).ToString() + ":" + Environment.NewLine +
+                                        newMessage.text);
+
                             }
                         }
                         else
@@ -359,7 +382,7 @@ namespace MessengerCore
                         tmp = mywebcore.core.ParseJson(b.imDialogMessagesGet(item.ChatIdBitrix));
                         RootDialogMessages tmpRootDialogMessages = Newtonsoft.Json.JsonConvert.DeserializeObject<RootDialogMessages>(b.lastAnswer);
 
-                        
+
                         for (int i = tmpRootDialogMessages.result.messages.Count - 1; i >= 0; i--)
                         //foreach (MessageDialogMessages inItem in tmpRootDialogMessages.result.messages)   // цикл надо развернуть
                         {
@@ -370,7 +393,7 @@ namespace MessengerCore
                             else if (tmpRootDialogMessages.result.messages[i].author_id.ToString() == tmpUserObj.UserIdBitrix)  // игнорируем сообщения системного пользователя
                                 continue;
                             else
-                            {                                
+                            {
                                 // обрабатывем сообщение битрикс для отправки в ТГ
                                 /*
                                 Message tMess = new Message()
@@ -390,21 +413,37 @@ namespace MessengerCore
                                 {
                                     //if (tmpRootDialogMessages.result.messages[i].text !=)                                
                                     {
-                                        User currentUser = settings.GetUserByBx(tmpRootDialogMessages.result.messages[i].id.ToString());
+                                        User currentUser = settings.GetUserByBx(tmpRootDialogMessages.result.messages[i].author_id.ToString());
                                         string tgUser = "<unknown>";
                                         string bXUser = "<unknown>";
                                         bitrix.User tmpBxUSer = GetUserAuthor(tmpRootDialogMessages.result.users, tmpRootDialogMessages.result.messages[i].author_id.ToString());
                                         if (tmpBxUSer != null)
                                             bXUser = tmpBxUSer.name;
-                                        
+
                                         if (currentUser != null)
+                                        {
                                             if (currentUser.UserIdTelegram != null & currentUser.UserIdTelegram != "")
                                                 tgUser = currentUser.NameFullTelegram;
+                                        }
+                                        else
+                                        {
+                                            workListUser.Add(new User()
+                                            {
+                                                NameFullBitrix = bXUser,
+                                                UserIdBitrix = tmpRootDialogMessages.result.messages[i].author_id.ToString()
+                                            });
+                                        }
 
-                                        t.sendMessage(item.ChatIdTelegram,
-                                            tgUser + " [" + bXUser + "] wrote in BX:" + Environment.NewLine +
-                                            tmpRootDialogMessages.result.messages[i].text
-                                            );
+                                        if (!Debug)
+                                            t.sendMessage(item.ChatIdTelegram,
+                                                tgUser + " [" + bXUser + "] wrote in BX at " + tmpRootDialogMessages.result.messages[i].date.ToString() + ":" + Environment.NewLine +
+                                                tmpRootDialogMessages.result.messages[i].text
+                                                );
+                                        else
+                                            Console.WriteLine("Send to TG: " +
+                                                tgUser + " [" + bXUser + "] wrote in BX at " + tmpRootDialogMessages.result.messages[i].date.ToString() + ":" + Environment.NewLine +
+                                                tmpRootDialogMessages.result.messages[i].text
+                                                );
                                     }
                                 }
                                 item.LastMessageIdBitrix = tmpRootDialogMessages.result.messages[i].id;
@@ -412,14 +451,17 @@ namespace MessengerCore
                         }
                     }
                 }
-                    
             }
-            
+
 
             // exit routines
             SaveSettings(settingsFileName);
 
-            //Console.ReadKey();
+            if (Debug)
+            {
+                Console.WriteLine("Debug is Active, so, plz press any key to exit..");
+                Console.ReadKey();
+            }                
             return;
 
             /*
@@ -464,7 +506,7 @@ namespace MessengerCore
                                 }
                                 b.imMessageAdd("1", "Next message get from automatic application", true, true);
                                 b.imMessageAdd("1", tmpUser + " написал в ТГ: " + Environment.NewLine + tmpMessage);
-                            }                
+                            }
             }
 
             /* // work 
@@ -474,7 +516,7 @@ namespace MessengerCore
             tmp = mywebcore.core.ParseJson(b.imDialogMessagesGet("chat1"));
             RootDialogMessages tmpRootDialogMessages = Newtonsoft.Json.JsonConvert.DeserializeObject<RootDialogMessages>(b.lastAnswer);
             */
-            b.imMessageAdd("1", "Next message get from automatic application",true, true);
+            b.imMessageAdd("1", "Next message get from automatic application", true, true);
             b.imMessageAdd("1", "Test message from REST");
             /*
             Console.WriteLine(b.UpdateState());
@@ -496,7 +538,7 @@ namespace MessengerCore
             {
                 Console.WriteLine("This operation cant be doing in AUTOMATIC mode. Plz, remove key AUTO or SCHEDULE and check it INTERACTIVE!");
                 return false;
-            }                
+            }
             if (settings == null)
                 settings = new Settings();
 
@@ -579,7 +621,7 @@ namespace MessengerCore
                         readStr = "";
                     }
                 }
-            
+
 
                 /*
                 Console.WriteLine("Select which settings you will fill first: Bitrix('b') or Telegram('t')?");
@@ -666,7 +708,7 @@ namespace MessengerCore
                 }
 
             }
-            
+
             if (bxNeed)
             {
                 if (setBx == null)
@@ -694,7 +736,7 @@ namespace MessengerCore
             }
 
             return true;
-                
+
 
             /*
             if (setBx == null)
@@ -728,7 +770,7 @@ namespace MessengerCore
 
             readStr = "";
             while (readStr == "" | readStr == null)
-            {                
+            {
                 Console.WriteLine("Input TG API-key:");
                 readStr = Console.ReadLine();
                 if (readStr == "exit")
@@ -748,7 +790,7 @@ namespace MessengerCore
 
             readStr = "";
             while (readStr == "" | readStr == null)
-            {                
+            {
                 Console.WriteLine("Input TG server URL (leave blank to use default):");
                 readStr = Console.ReadLine();
                 if (readStr == "exit")
@@ -772,7 +814,7 @@ namespace MessengerCore
                     readStr = "";
             }
 
-            
+
             Console.WriteLine("Checking TG settings ...");
             if (!CheckSettingsTelegram(result))
             {
@@ -780,7 +822,7 @@ namespace MessengerCore
                 return null;
             }
 
-            Console.WriteLine("Success! Telegram is ready!");            
+            Console.WriteLine("Success! Telegram is ready!");
             return result;
         }
 
@@ -800,7 +842,7 @@ namespace MessengerCore
                         if (checkSet.ServerUrl.Length > 0)
                             if (checkSet.ServerUrl.StartsWith("https://") | checkSet.ServerUrl.StartsWith("http://"))
                                 testTg = new TelegramBot(checkSet.API_KEY, checkSet.ServerUrl);
-                    
+
                     // если не указан serverUrl тогда создаем Телеграм только по токену
                     if (testTg == null)
                         testTg = new TelegramBot(checkSet.API_KEY);
@@ -812,14 +854,14 @@ namespace MessengerCore
                         return true;
                     }
                 }
-            }  
-            
+            }
+
             if (testTg != null)
             {
                 if (testTg.LastError != null)
                 {
                     string fullErrorMessage = "";
-                    Exception curError = testTg.LastError;                    
+                    Exception curError = testTg.LastError;
                     while (curError != null)
                     {
                         fullErrorMessage += "+-" + curError.Message;
@@ -829,8 +871,8 @@ namespace MessengerCore
                 }
                 else
                     Console.WriteLine("TG Last Answer: " + testTg.LastAnswer);
-            }               
-            
+            }
+
             return false;
         }
 
@@ -851,19 +893,19 @@ namespace MessengerCore
 
             readStr = "";
             while (readStr == "" | readStr == null)
-            {                
+            {
                 Console.WriteLine("Input BX Server URL(must include http:// or https://):");
                 readStr = Console.ReadLine();
                 if (readStr == "exit")
                 {
-                    Console.WriteLine("Canceled by user.");                    
+                    Console.WriteLine("Canceled by user.");
                     return null;
                 }
                 else if (readStr.StartsWith("http://") | readStr.StartsWith("https://"))
                 {
-                    result.ServerUrl = readStr;                    
+                    result.ServerUrl = readStr;
                     break;
-                }                    
+                }
                 else
                     readStr = "";
             }
@@ -875,7 +917,7 @@ namespace MessengerCore
                 readStr = Console.ReadLine();
                 if (readStr == "exit")
                 {
-                    Console.WriteLine("Canceled by user.");                    
+                    Console.WriteLine("Canceled by user.");
                     return null;
                 }
                 else if (readStr.Length > 0)
@@ -903,14 +945,14 @@ namespace MessengerCore
                     result.Password = readStr;
                     //readStr = "";
                     break;
-                }                    
+                }
                 else
                     readStr = "";
             }
 
 
             //testBitrix = new bitrix.bitrix(result.ServerUrl, result.Login, result.Password);
-                       
+
             Console.WriteLine("Checking BX settings ...");
             if (!CheckSettingsBitrix(result))
             {
@@ -918,7 +960,7 @@ namespace MessengerCore
                 return null;
             }
 
-            Console.WriteLine("Success! Bitrix is ready!");            
+            Console.WriteLine("Success! Bitrix is ready!");
             return result;
         }
 
@@ -940,13 +982,13 @@ namespace MessengerCore
                             checkSet.ServerUrl = checkSet.ServerUrl + "/";
                         testBx = new bitrix.bitrix(checkSet.ServerUrl, checkSet.Login, checkSet.Password);
                     }
-                        
+
 
                     if (testBx != null) // если все заполнено
                         if (testBx.bitrixSessionId != null) // если есть ответ от сервера
                             return true;
                 }
-            }            
+            }
             return false;
         }
 
@@ -963,7 +1005,7 @@ namespace MessengerCore
                 {
                     settings = (Settings)tmpSet;
                     return true;
-                }                    
+                }
             return false;
         }
 
@@ -974,7 +1016,7 @@ namespace MessengerCore
         /// <returns></returns>
         public static bool SaveSettings(string filename)
         {
-            return SFileIO.SaveObjectXML(settings, filename);            
+            return SFileIO.SaveObjectXML(settings, filename);
         }
 
         /// <summary>
@@ -994,7 +1036,7 @@ namespace MessengerCore
             return result;
         }
 
-        private static bitrix.User GetUserAuthor(IEnumerable<bitrix.User>Users, string user_id)
+        private static bitrix.User GetUserAuthor(IEnumerable<bitrix.User> Users, string user_id)
         {
             foreach (bitrix.User item in Users)
             {

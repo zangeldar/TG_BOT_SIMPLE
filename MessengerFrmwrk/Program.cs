@@ -379,11 +379,14 @@ namespace MessengerFrmwrk
                 {
                     if (item.ChatIdBitrix != "")
                     {
-                        tmp = mywebcore.core.ParseJson(b.imDialogMessagesGet(item.ChatIdBitrix));
+                        tmp = mywebcore.core.ParseJson(b.imDialogMessagesGet(item.ChatIdBitrix, true, -1, item.LastMessageIdBitrix));
                         RootDialogMessages tmpRootDialogMessages = Newtonsoft.Json.JsonConvert.DeserializeObject<RootDialogMessages>(b.lastAnswer);
 
 
-                        for (int i = tmpRootDialogMessages.result.messages.Count - 1; i >= 0; i--)
+                        //for (int i = tmpRootDialogMessages.result.messages.Count - 1; i >= 0; i--)    // обратный порядок нужен, если imDialogMEssagesGet выполнялся без указания LAST_MESSAGE_ID
+                                                                                                        // ОДНАКО, возникали ситуации, когда такой запрос не возвращал самые последние сообщения.
+                        for (int i = 0; i < tmpRootDialogMessages.result.messages.Count; i++)    // прямой порядок нужен, если imDialogMEssagesGet выполнялся с указанием LAST_MESSAGE_ID
+                                                                                                 // ЧТОБЫ быть уверенным, что мы получаем самые последние сообщения.
                         //foreach (MessageDialogMessages inItem in tmpRootDialogMessages.result.messages)   // цикл надо развернуть
                         {
                             if (tmpRootDialogMessages.result.messages[i].id <= item.LastMessageIdBitrix)  // пропускаем обработанные сообщения (id менбше сохраненного)
@@ -435,10 +438,25 @@ namespace MessengerFrmwrk
                                         }
 
                                         if (!Debug)
-                                            t.sendMessage(item.ChatIdTelegram,
+                                        {
+
+
+                                            if (t.sendMessage(item.ChatIdTelegram,
                                                 tgUser + " [" + bXUser + "] wrote in BX at " + tmpRootDialogMessages.result.messages[i].date.ToString() + ":" + Environment.NewLine +
                                                 tmpRootDialogMessages.result.messages[i].text
-                                                );
+                                                ) == null)
+                                            {
+                                                Console.WriteLine("Error while sending to TG: " + t.LastError.Message);
+
+                                                if (t.LastErrorResponse != null)
+                                                {
+                                                    Console.WriteLine("Last req: " + t.LastRequest);
+                                                    Console.WriteLine("Last err.resp: " + t.LastErrorResponse);
+                                                }
+
+                                                break;
+                                            }
+                                        }
                                         else
                                             Console.WriteLine("Send to TG: " +
                                                 tgUser + " [" + bXUser + "] wrote in BX at " + tmpRootDialogMessages.result.messages[i].date.ToString() + ":" + Environment.NewLine +

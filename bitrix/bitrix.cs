@@ -365,7 +365,7 @@ namespace bitrix
                                     bool JSON = true,
                                     long LAST_ID = -1,
                                     long FIRST_ID = -1,
-                                    int LIMIT = 20)
+                                    int LIMIT = -1)
         {
             Dictionary<string, string> MyParameters = new Dictionary<string, string>();
 

@@ -1,75 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace MessengerFrmwrk
-
+namespace tgBotMersin
 {
     public static class SFileIO
     {
-        /*
-        public static bool SaveMyResponse(object curObj, string fileName = "temp.bin", bool overwrite = false)
-        {
-            bool result = false;
-
-            if (!overwrite)
-                fileName = GetRandomFileName(fileName);
-            else
-            {
-                if (File.Exists(fileName))
-                    try
-                    {
-                        File.Delete(fileName);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Can't delete the old file: " + fileName);
-                        Console.WriteLine("Will be overwritten " + fileName);
-                        //throw;
-                    }                    
-            }                
-            
-            try
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                using (Stream output = File.OpenWrite(fileName))
-                {
-                    bf.Serialize(output, curObj);
-                }
-                result = true;
-            }
-            catch (Exception e)
-            {
-                result = false;
-                //throw;
-            }
-
-            return result;
-        }
-
-        public static object LoadMyResponse(string fileName = "temp.bin")
-        {
-            object result = null;
-            try
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                using (Stream input = File.OpenRead(fileName))
-                {
-                    result = bf.Deserialize(input);
-                }
-            }
-            catch (Exception e)
-            {
-                result = null;
-                //throw;
-            }
-            return result;
-        }
-        */
-        static private string GetRandomFileName(string fileName, string fileExt="ext")
+        static private string GetRandomFileName(string fileName, string fileExt = "ext")
         {
             string result = fileName;
 
@@ -96,16 +37,16 @@ namespace MessengerFrmwrk
             return result;
         }
 
-        
+
         static public bool SaveObjectXML(object curObj, string fileName = "object.xml") // не работает от интерфейса
         {
-            bool result = false;            
+            bool result = false;
             try
             {
                 //XmlSerializer formatter = new XmlSerializer(typeof(object));
                 XmlSerializer formatter = new XmlSerializer(curObj.GetType());// typeof(Settings));
 
-                using (Stream output = File.OpenWrite(fileName))
+                using (Stream output = File.Create(fileName))
                 {
                     formatter.Serialize(output, curObj);
                 }
@@ -122,18 +63,18 @@ namespace MessengerFrmwrk
 
         static public object LoadObjectXML(object curObj, string fileName = "object.xml") // не работает от интерфейса
         {
-            object result = null;           
-            
+            object result = null;
+
             try
             {
-                XmlSerializer formatter = new XmlSerializer(curObj.GetType());                
+                XmlSerializer formatter = new XmlSerializer(curObj.GetType());
                 //XmlSerializer formatter = new XmlSerializer(typeof(String));
                 //XmlSerializer formatter = new XmlSerializer(Type.GetType(checkType));
                 //XmlSerializer formatter = new XmlSerializer(Type.GetType("ASVRequest"));
 
                 using (Stream input = File.OpenRead(fileName))
-                {                    
-                    result = formatter.Deserialize(input);  
+                {
+                    result = formatter.Deserialize(input);
                 }
             }
             catch (Exception e)
@@ -143,7 +84,7 @@ namespace MessengerFrmwrk
             }
             return result;
         }
-        
+
 
         public static bool SaveObject(Object curObj, string fileName = "temp.bin", bool overwrite = false)
         {

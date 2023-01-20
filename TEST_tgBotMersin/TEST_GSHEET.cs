@@ -10,8 +10,8 @@ namespace TEST_tgBotMersin
 {
     public class testGSheet:test
     {
-        private string api_key = "AIzaSyAPklyQKUd1Il0WwabqJf5FUssY0fDTc4Q";
-        private string gSheetId = "1tO5HIjEKPeZdITzzdO7OyuD_iPcuyVF-z9-ITIA0Jw4";
+        private string api_key = "PLACE_HERE_YOUR_GOOGLE_API_KEY";        // Google API key
+        private string gSheetId = "PLACE_HERE_YOUR_SPREADSHEET_ID";       // SpreadSheetId "1tO5HIjEKPeZdITzzdO7OyuD_iPcuyVF-z9-ITIA0Jw4"
         GoogleSpreadSheet spreadsheet;// = new GoogleSpreadSheet(gSheetId, api_key);
 
         public testGSheet()

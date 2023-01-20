@@ -5,18 +5,15 @@ VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mywebcore", "mywebcore\mywebcore.csproj", "{EDFDB992-48B7-4D50-B949-FEAD9D54D187}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tglib", "..\..\Telegram\Telegram\tglib\tglib.csproj", "{28EC710E-5C02-4A43-8865-1CB99F887719}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RUN_tgBotMersin", "RUN_tgBotMersin\RUN_tgBotMersin.csproj", "{0B228EC4-D2A2-4EF8-95F7-64656E5CA553}"
-	ProjectSection(ProjectDependencies) = postProject
-		{28EC710E-5C02-4A43-8865-1CB99F887719} = {28EC710E-5C02-4A43-8865-1CB99F887719}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TESTs", "TESTs", "{54C01935-2CBF-4633-973A-75ECD3042FFA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TEST_tgBotMersin", "TEST_tgBotMersin\TEST_tgBotMersin.csproj", "{25B0D031-E04E-42FE-AE40-521A485A50BF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gSheetsLib", "gSheets\gSheetsLib.csproj", "{950DED35-72B5-4C89-A5B3-69ADC3FFBD24}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tglib", "tglib\tglib.csproj", "{BE76D32C-4E73-4907-834D-2B4DD73B0452}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,10 +25,6 @@ Global
 		{EDFDB992-48B7-4D50-B949-FEAD9D54D187}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDFDB992-48B7-4D50-B949-FEAD9D54D187}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDFDB992-48B7-4D50-B949-FEAD9D54D187}.Release|Any CPU.Build.0 = Release|Any CPU
-		{28EC710E-5C02-4A43-8865-1CB99F887719}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{28EC710E-5C02-4A43-8865-1CB99F887719}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28EC710E-5C02-4A43-8865-1CB99F887719}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{28EC710E-5C02-4A43-8865-1CB99F887719}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B228EC4-D2A2-4EF8-95F7-64656E5CA553}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B228EC4-D2A2-4EF8-95F7-64656E5CA553}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B228EC4-D2A2-4EF8-95F7-64656E5CA553}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -44,6 +37,10 @@ Global
 		{950DED35-72B5-4C89-A5B3-69ADC3FFBD24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{950DED35-72B5-4C89-A5B3-69ADC3FFBD24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{950DED35-72B5-4C89-A5B3-69ADC3FFBD24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE76D32C-4E73-4907-834D-2B4DD73B0452}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE76D32C-4E73-4907-834D-2B4DD73B0452}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE76D32C-4E73-4907-834D-2B4DD73B0452}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE76D32C-4E73-4907-834D-2B4DD73B0452}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

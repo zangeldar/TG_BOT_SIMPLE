@@ -9,7 +9,7 @@ namespace gSheetsLib
     public class GoogleSpreadSheet
     {
         //public const string baseUrl = "https://sheets.googleapis.com/v4/spreadsheets/";
-        //private string api_key = "AIzaSyAPklyQKUd1Il0WwabqJf5FUssY0fDTc4Q";
+        
         public string spreadsheetId { get; private set; }
         public string LastRange { get; private set; }
         public GoogleSpreadSheet()
@@ -21,8 +21,7 @@ namespace gSheetsLib
         public GoogleSpreadSheet(string spreadsheetId)
         {
             serverUrl = "https://sheets.googleapis.com/v4/spreadsheets/";
-            this.spreadsheetId = spreadsheetId;
-            //SetApiKey("AIzaSyAPklyQKUd1Il0WwabqJf5FUssY0fDTc4Q");
+            this.spreadsheetId = spreadsheetId;            
         }
 
         public GoogleSpreadSheet(string spreadsheetId, string api_key)
@@ -49,7 +48,7 @@ namespace gSheetsLib
         {
             string result = "";
 
-            //urlToSpreadSheet = "https://docs.google.com/spreadsheets/d/1tO5HIjEKPeZdITzzdO7OyuD_iPcuyVF-z9-ITIA0Jw4/edit#gid=2137331829";
+            //urlToSpreadSheet = "https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit";
             string[] tmpStr = urlToSpreadSheet.Split('/');
             if (tmpStr.Length > 5)
                 result = tmpStr[5];

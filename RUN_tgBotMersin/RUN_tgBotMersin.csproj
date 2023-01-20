@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Telegram\Telegram\tglib\tglib.csproj" />
     <ProjectReference Include="..\gSheets\gSheetsLib.csproj" />
+    <ProjectReference Include="..\tglib\tglib.csproj" />
   </ItemGroup>
 
 </Project>

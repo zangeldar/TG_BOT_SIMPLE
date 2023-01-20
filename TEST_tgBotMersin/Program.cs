@@ -10,8 +10,8 @@ string GoogleSheetCellsUrlExample = "https://sheets.googleapis.com/v4/spreadshee
 dynamic test;
 dynamic tmp;
 
-//test = new testTG();
-//tmp = test.DoTest();
+test = new testTG();
+tmp = test.DoTest();
 
 test = new testGSheet();
 tmp = "";

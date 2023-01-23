@@ -65,11 +65,11 @@ namespace tgBotMersin
             return GetNumberOfWeek(askDate).ToString();
         }
 
-        public static List<string> GetTimeSlots(GoogleSpreadSheet sheet, string sheetName)
+        public static List<string> GetTimeSlots(GoogleSpreadSheet sheet, string sheetName, int border=3600)
         {
             List<string> result = new List<string>();
 
-            string tmp = sheet.GetValues(1, 1, 3600, 1, sheetName);
+            string tmp = sheet.GetValues(1, 1, border, 1, sheetName);
             if (tmp != null)
             {
                 gValues tmpValues = Newtonsoft.Json.JsonConvert.DeserializeObject<gValues>(tmp);
@@ -83,11 +83,11 @@ namespace tgBotMersin
             return result;
         }
 
-        public static List<string> GetDateSlots(GoogleSpreadSheet sheet, string sheetName)
+        public static List<string> GetDateSlots(GoogleSpreadSheet sheet, string sheetName, int border=99)
         {
             List<string> result = new List<string>();
 
-            string tmp = sheet.GetValues(1, 1, 1, 33, sheetName);
+            string tmp = sheet.GetValues(1, 1, 1, border, sheetName);
             if (tmp != null)
             {
                 gValues tmpValues = Newtonsoft.Json.JsonConvert.DeserializeObject<gValues>(tmp);

@@ -21,9 +21,13 @@ namespace tgBotMersin
         {
             string result = "";
             GoogleSpreadSheet sheet = new GoogleSpreadSheet(urlToGoogleSheet, tgMersinWorker.settings.SettingsGoogle.GoogleApiKey, true);
-            //result = GetUrlFromGoogleSheet(sheet, DateTime.Now);
-            result = GetUrlFromGoogleSheet(sheet, askDate);
-            tgMersinWorker.settings.LastUsedRangeGoogleSheet = sheet.LastRange;
+            if (sheet != null)
+            {
+                //result = GetUrlFromGoogleSheet(sheet, DateTime.Now);
+                result = GetUrlFromGoogleSheet(sheet, askDate);
+                tgMersinWorker.settings.LastUsedRangeGoogleSheet = sheet.LastRange;
+            }
+            
             return result;
         }
 

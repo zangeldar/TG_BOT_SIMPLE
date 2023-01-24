@@ -36,9 +36,10 @@ namespace tgBotMersin
             {
                 gValues tmpValues = Newtonsoft.Json.JsonConvert.DeserializeObject<gValues>(tmp);
                 if (tmpValues != null)
-                    if (tmpValues.values.Count > 0)
-                        if (tmpValues.values[0].Count > 0)
-                            result = tmpValues.values[0][0];
+                    if (tmpValues.values != null)   // happens if cell is blank
+                        if (tmpValues.values.Count > 0)
+                            if (tmpValues.values[0].Count > 0)
+                                result = tmpValues.values[0][0];
             }
 
             return result;

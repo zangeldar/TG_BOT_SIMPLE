@@ -106,7 +106,7 @@ Console.WriteLine("Last used range: " + prevRange);
 
 string src_msg;
 src_msg = tgMersinWorker.GetLinkFromTable(tgMersinWorker.settings.SettingsGoogle.UrlToTable, DateTime.Now.AddHours(0));
-//src_msg = tgMersinWorker.GetLinkFromTable(tgMersinWorker.settings.SettingsGoogle.UrlToTable, DateTime.Parse("2023-01-17T08:00:01.0000000+03:00"));
+//src_msg = tgMersinWorker.GetLinkFromTable(tgMersinWorker.settings.SettingsGoogle.UrlToTable, DateTime.Parse("2023-01-24T02:22:01.0000000+03:00"));
 Console.WriteLine("Get data from GoogleSheet range [" + tgMersinWorker.settings.LastUsedRangeGoogleSheet + "]: " + src_msg);
 
 if (prevRange != tgMersinWorker.settings.LastUsedRangeGoogleSheet)

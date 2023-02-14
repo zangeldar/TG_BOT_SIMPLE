@@ -11,15 +11,23 @@ if (args.Length > 0)
     {
         if (arg.Contains("settings="))
         {
+            Console.WriteLine("Key " + arg + "found");
             tmpFileName = arg.Replace("settings=", "");
         }
         else if (arg == "schedule" | arg == "auto")
         {
+            Console.WriteLine("Key " + arg + "found");
             tgMersinWorker.InteractiveRun = false;
         }
         else if (arg == "debug")
         {
-            tgMersinWorker.Debug = true;
+            Console.WriteLine("Key " + arg + "found");
+            tgMersinWorker.Debug = true;            
+        }
+        else if (arg == "nopin")
+        {
+            Console.WriteLine("Key " + arg + "found");
+            tgMersinWorker.NoPin = true;
         }
         else
         {
@@ -141,7 +149,7 @@ if (prevRange != tgMersinWorker.settings.LastUsedRangeGoogleSheet)
                 tgMersinWorker.ForwardMessageToChat(
                     tgBot, src_msg,
                     tgMersinWorker.settings.SettingsTelegram.UrlToDstChat,
-                    true)
+                    !tgMersinWorker.NoPin)
                 );
         }
     }

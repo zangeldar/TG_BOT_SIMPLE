@@ -15,7 +15,7 @@ dynamic tmp;
 
 test = new testGSheet();
 tmp = "";
-//tmp = test.DoTest();
+tmp = test.DoTest();
 tmp = test.ProceedDate();
 
 

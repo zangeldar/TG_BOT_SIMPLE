@@ -13,7 +13,7 @@ namespace TEST_tgBotMersin
         private string api_key = "PLACE_HERE_YOUR_GOOGLE_API_KEY";        // Google API key
         private string gSheetId = "PLACE_HERE_YOUR_SPREADSHEET_ID";       // SpreadSheetId "1tO5HIjEKPeZdITzzdO7OyuD_iPcuyVF-z9-ITIA0Jw4"
         GoogleSpreadSheet spreadsheet;// = new GoogleSpreadSheet(gSheetId, api_key);
-
+        
         public testGSheet()
         {
             spreadsheet = new GoogleSpreadSheet(gSheetId, api_key);
@@ -24,6 +24,8 @@ namespace TEST_tgBotMersin
             string result = "";
 
             result = spreadsheet.GetValues(1, 1, 10, 1, "10");
+
+            result = spreadsheet.GetValues(3, 4, 11, 4, "5");
 
             gValues tmpValues = Newtonsoft.Json.JsonConvert.DeserializeObject<gValues>(result);
 

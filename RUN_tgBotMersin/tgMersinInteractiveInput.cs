@@ -17,6 +17,8 @@ namespace tgBotMersin
         public static bool InteractiveRun = true;
         public static bool Debug = false;
 
+        public static bool NoPin = false;
+
         /// <summary>
         /// Интерактивное заполнение настроек в консоли
         /// </summary>
